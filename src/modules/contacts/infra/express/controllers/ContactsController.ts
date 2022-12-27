@@ -17,17 +17,29 @@ export class ContactsController {
     const { file, user_id } = req as any
     const headers = [
       {
-        original: 'e-mail',
-        new: 'E-mail'
+        original: 'name contact',
+        new: 'name'
+      },
+      {
+        original: 'contact e-mail',
+        new: 'email'
       },
       {
         original: 'birth',
-        new: 'Birthday'
+        new: 'date_of_birthday'
       },
       {
-        original: 'credit card',
-        new: 'Card type'
-      }
+        original: 'telephone',
+        new: 'phone'
+      },
+      {
+        original: 'contact address',
+        new: 'address'
+      },
+      {
+        original: 'credit card number',
+        new: 'credit_card'
+      },
     ]
 
     const persistContactsFromCsv = container.resolve(PersistContactsFromCsv)

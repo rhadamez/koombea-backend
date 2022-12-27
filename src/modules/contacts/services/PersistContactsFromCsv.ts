@@ -33,50 +33,53 @@ export class PersistContactsFromCsv {
 		return { contactsFormatted }
 		}
 
-		async formatContacts(file: Express.Multer.File, headers: HeaderTypes[]): Promise<string> {
-			const stream = fs.createReadStream(file.path)
+	async formatContacts(file: Express.Multer.File, headers: HeaderTypes[]): Promise<string> {
+		const stream = fs.createReadStream(file.path)
 
-			const parseFile = csvParse.parse({
-					delimiter: ','
-			})
+		const parseFile = csvParse.parse({
+				delimiter: ','
+		})
 
-			stream.pipe(parseFile)
+		stream.pipe(parseFile)
 
-			return new Promise((res, rej) => {
-					const contactsFromCsv: any = []
-					let i = 0
-					let firstLine: any[] = []
-					parseFile.on('data', async (line) => {
-							const [col1, col2, col3] = line
-							if(i === 0) firstLine = line
-							else {
-								const [fcol1, fcol2, fcol3] = firstLine
-								const aff = {
-									[fcol1]: col1,
-									[fcol2]: col2,
-									[fcol3]: col3,
-								}
-								contactsFromCsv.push(aff)
+		return new Promise((res, rej) => {
+				const contactsFromCsv: any = []
+				let i = 0
+				let firstLine: any[] = []
+				parseFile.on('data', async (line) => {
+						const [col1, col2, col3, col4, col5, col6] = line
+						if(i === 0) firstLine = line
+						else {
+							const [fcol1, fcol2, fcol3, fcol4, fcol5, fcol6] = firstLine
+							const aff = {
+								[fcol1]: col1,
+								[fcol2]: col2,
+								[fcol3]: col3,
+								[fcol4]: col4,
+								[fcol5]: col5,
+								[fcol6]: col6,
 							}
-							i++
-					})
-
-					const contactsFormatted: any = []
-
-					parseFile.on('end', () => {
-						contactsFromCsv.map((contact: any) => {
-							let newOb = {}
-							for(let propName in contact) {
-								const thereis = headers.find(n => n.original == propName)
-								if(thereis) {
-									newOb = {...newOb, [thereis.new]: contact[propName]}
-								}
-							}
-							contactsFormatted.push(newOb)
-						})
-						console.log(contactsFormatted)
-						res(contactsFormatted as any)
-					})
+							contactsFromCsv.push(aff)
+						}
+						i++
 				})
-		}
+
+				const contactsFormatted: any = []
+
+				parseFile.on('end', () => {
+					contactsFromCsv.map((contact: any) => {
+						let newOb = {}
+						for(let propName in contact) {
+							const thereis = headers.find(n => n.original == propName)
+							if(thereis) {
+								newOb = {...newOb, [thereis.new]: contact[propName]}
+							}
+						}
+						contactsFormatted.push(newOb)
+					})
+					console.log(contactsFormatted)
+					res(contactsFormatted as any)
+				})
+			})
+	}
 }
