@@ -1,6 +1,9 @@
+import fs from 'fs'
+
 import { inject, injectable } from 'tsyringe'
 import csvParse from 'csv-parse'
-import fs from 'fs'
+import cardValidator from 'card-validator'
+
 import { ContactsRepository } from '../repositories/ContactsRepository'
 import { UsersRepository } from '../../users/repositories/UsersRepository'
 
@@ -30,10 +33,14 @@ export class PersistContactsFromCsv {
 		const userExists = await this.usersRepository.findById(user_id)
 
 		const contactsFormatted = await this.formatContacts(file, headers)
-		return { contactsFormatted }
+		const contactsWithFranchise = contactsFormatted.map(c => {
+			const franchise = this.setCardFranchise(c.credit_card)
+			return {...c, franchise}
+		})
+		return { contactsWithFranchise }
 		}
 
-	async formatContacts(file: Express.Multer.File, headers: HeaderTypes[]): Promise<string> {
+	async formatContacts(file: Express.Multer.File, headers: HeaderTypes[]): Promise<any[]> {
 		const stream = fs.createReadStream(file.path)
 
 		const parseFile = csvParse.parse({
@@ -68,7 +75,7 @@ export class PersistContactsFromCsv {
 
 				parseFile.on('end', () => {
 					contactsFromCsv.map((contact: any) => {
-						let newOb = {}
+						let newOb: any = {}
 						for(let propName in contact) {
 							const thereis = headers.find(n => n.original == propName)
 							if(thereis) {
@@ -78,8 +85,15 @@ export class PersistContactsFromCsv {
 						contactsFormatted.push(newOb)
 					})
 					console.log(contactsFormatted)
-					res(contactsFormatted as any)
+					res(contactsFormatted)
 				})
 			})
+	}
+
+	setCardFranchise(cardNumber: any) {
+		const { card } = cardValidator.number(cardNumber)
+		const type = card && card.type
+		console.log(type)
+		return type
 	}
 }
