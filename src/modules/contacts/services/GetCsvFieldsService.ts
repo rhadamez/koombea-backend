@@ -60,14 +60,14 @@ export class GetCsvFieldsService {
 
 			parseFile.on('end', () => {
 				const newArray = atualizado.map((a, i) => {
+					let newOb = {}
 					for(let aa in a) {
 						const thereis = novos.find(n => n.original == aa)
 						if(thereis) {
-							amem.push({
-								[thereis.new]: a[aa]
-							})
+							newOb = {...newOb, [thereis.new]: a[aa]}
 						}
 					}
+					amem.push(newOb)
 				})
 				console.log(amem)
 				res(amem as any)
