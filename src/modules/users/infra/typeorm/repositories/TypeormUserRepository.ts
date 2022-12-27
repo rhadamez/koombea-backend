@@ -15,8 +15,12 @@ export class TypeormUserRepository implements UsersRepository {
     await this.ormRepository.save(newUser)
   }
 
+  async findById(id: number): Promise<User | undefined> {
+    return await this.ormRepository.findOne({ where: { id }})
+  }
+
   async findByUsername(username: string): Promise<User | undefined> {
     return await this.ormRepository.findOne({ where: { username }})
   }
-  
+
 }

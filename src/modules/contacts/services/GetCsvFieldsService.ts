@@ -6,12 +6,12 @@ import fs from 'fs'
 export class GetCsvFieldsService {
 
 	async execute(file: Express.Multer.File): Promise<any> {
-		const fields = await this.readCsv(file)
+		const fields = await this.getCsvHeaders(file)
 
 		return { fields }
 	}
 
-	async readCsv(file: Express.Multer.File): Promise<string> {
+	async getCsvHeaders(file: Express.Multer.File): Promise<string> {
 		const stream = fs.createReadStream(file.path)
 
 		const parseFile = csvParse.parse({
@@ -20,58 +20,18 @@ export class GetCsvFieldsService {
 
 		stream.pipe(parseFile)
 
-		const novos = [{
-			original: 'e-mail',
-			new: 'E-mail'
-		},
-	  {
-			original: 'birth',
-			new: 'Birthday'
-		},
-		{
-			original: 'credit card',
-			new: 'Card type'
-		}
-	]
-
-	return new Promise((res, rej) => {
-			const atualizado: any = []
-			let i = 0
-			let firstLine: any[] = []
-			parseFile.on('data', async (line) => {
-					const [col1, col2, col3] = line
-					if(i === 0) firstLine = line
-					else {
-						const [fcol1, fcol2, fcol3] = firstLine
-						const aff = {
-							[fcol1]: col1,
-							[fcol2]: col2,
-							[fcol3]: col3,
-						}
-						atualizado.push(aff)
-						
-					}
-					//console.log(line)
-					//else parseFile.addListener('end', () => {})
-					i++
-			})
-
-			const amem: any = []
-
-			parseFile.on('end', () => {
-				const newArray = atualizado.map((a, i) => {
-					let newOb = {}
-					for(let aa in a) {
-						const thereis = novos.find(n => n.original == aa)
-						if(thereis) {
-							newOb = {...newOb, [thereis.new]: a[aa]}
-						}
-					}
-					amem.push(newOb)
+		return new Promise((res, rej) => {
+				let i = 0
+				let csvHeaders: any[] = []
+				parseFile.on('data', async (line) => {
+						if(i === 0) csvHeaders = line
+						else parseFile.emit('end')
+						i++
 				})
-				console.log(amem)
-				res(amem as any)
+
+				parseFile.on('end', () => {
+					res(csvHeaders as any)
+				})
 			})
-		})
 	}
 }

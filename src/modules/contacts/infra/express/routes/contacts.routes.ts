@@ -9,6 +9,7 @@ const upload = multer(uploadConfig.multer)
 
 const contactsController = new ContactsController()
 
-contactsRouter.post('/upload-csv', upload.single('file'), contactsController.getCsvFields)
+contactsRouter.post('/import', upload.single('file'), contactsController.getCsvFields)
+contactsRouter.post('/upload-csv', upload.single('file'), contactsController.saveAll)
 
 export { contactsRouter }
