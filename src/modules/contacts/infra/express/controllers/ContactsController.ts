@@ -8,7 +8,7 @@ export class ContactsController {
     const { file } = req as any
     
     const getCsvFieldsService = container.resolve(GetCsvFieldsService)
-    await getCsvFieldsService.execute(file)
-    return rep.status(201).json()
+    const headers = await getCsvFieldsService.execute(file)
+    return rep.status(201).json(headers)
   }
 }
