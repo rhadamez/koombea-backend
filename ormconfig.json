@@ -1,0 +1,17 @@
+{
+  "type": "pg",
+  "host": "localhost",
+  "port": 3306,
+  "username": "root",
+  "password": "123321",
+  "database": "backend",
+  "entities": [
+		"./src/modules/**/entities/*.ts"
+	],
+	"migrations": [
+		"./src/shared/infra/typeorm/migrations/*.ts"
+	],
+	"cli": {
+		"migrationsDir": "./src/shared/infra/typeorm/migrations"
+	}
+}
