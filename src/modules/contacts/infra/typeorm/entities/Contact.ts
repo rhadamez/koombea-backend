@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import BaseEntity from '../../../../../shared/infra/typeorm/entities/BaseEntity'
-import User from '../../../../users/infra/typeorm/entities/User'
+import { User } from '../../../../users/infra/typeorm/entities/User'
 
 @Entity('users')
 export default class Contact extends BaseEntity {

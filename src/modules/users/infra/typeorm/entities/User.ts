@@ -3,7 +3,7 @@ import BaseEntity from '../../../../../shared/infra/typeorm/entities/BaseEntity'
 import Contact from '../../../../contacts/infra/typeorm/entities/Contact'
 
 @Entity('users')
-export default class User extends BaseEntity {
+export class User extends BaseEntity {
 	@Column()
 	username: string
 

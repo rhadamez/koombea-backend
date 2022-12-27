@@ -14,10 +14,6 @@ export class CreateUsersTable1672107228264 implements MigrationInterface {
 					generationStrategy: 'increment'
 				},
 				{
-					name: 'name',
-					type: 'varchar'
-				},
-				{
 					name: 'username',
 					type: 'varchar',
 					isUnique: true
