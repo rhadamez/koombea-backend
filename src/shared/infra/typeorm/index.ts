@@ -1,21 +1,5 @@
-import "reflect-metadata"
-import { DataSource } from "typeorm"
-import { User } from "../../../modules/users/infra/typeorm/entities/User"
+import { Connection, createConnection } from 'typeorm'
 
-const AppDataSource = new DataSource({
-    type: "postgres",
-    host: "localhost",
-    port: 5432,
-    username: "root",
-    password: "123321",
-    database: "backend",
-    entities: [User],
-    //synchronize: true,
-    logging: false,
-})
-
-const createConnection = async () => {
-  await AppDataSource.initialize()
+export default async (): Promise<Connection> => {
+	return await createConnection()
 }
-
-export { createConnection }

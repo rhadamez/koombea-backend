@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 import 'express-async-errors'
 import express from 'express'
-import { createConnection } from '../typeorm'
+import createConnection from '../typeorm'
 import '../../providers'
 import routes from './routes'
 import exceptionValidation from './middlewares/exceptionValidation'
