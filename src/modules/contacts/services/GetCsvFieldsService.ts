@@ -1,6 +1,6 @@
+import fs from 'fs'
 import { injectable } from 'tsyringe'
 import csvParse from 'csv-parse'
-import fs from 'fs'
 
 @injectable()
 export class GetCsvFieldsService {
@@ -8,7 +8,7 @@ export class GetCsvFieldsService {
 	async execute(file: Express.Multer.File): Promise<any> {
 		const fields = await this.getCsvHeaders(file)
 
-		return { fields }
+		return { fields, filename: file.filename }
 	}
 
 	async getCsvHeaders(file: Express.Multer.File): Promise<string> {

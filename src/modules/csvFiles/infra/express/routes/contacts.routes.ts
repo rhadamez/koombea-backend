@@ -13,7 +13,7 @@ const contactsController = new ContactsController()
 
 contactsRouter.use(ensureAuthenticated)
 contactsRouter.get('/', contactsController.listAll)
-contactsRouter.post('/', contactsController.saveAll)
 contactsRouter.post('/import', upload.single('file'), contactsController.getCsvFields)
+contactsRouter.post('/upload-csv', upload.single('file'), contactsController.saveAll)
 
 export { contactsRouter }

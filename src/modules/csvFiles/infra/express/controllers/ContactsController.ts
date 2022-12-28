@@ -23,11 +23,36 @@ export class ContactsController {
   }
 
   async saveAll(req: Request, rep: Response): Promise<Response> {
-    const { user_id } = req as any
-    const { filename, headers } = req.body
+    const { file, user_id } = req as any
+    const headers = [
+      {
+        original: 'name contact',
+        new: 'name'
+      },
+      {
+        original: 'contact e-mail',
+        new: 'email'
+      },
+      {
+        original: 'birth',
+        new: 'date_of_birth'
+      },
+      {
+        original: 'telephone',
+        new: 'phone'
+      },
+      {
+        original: 'contact address',
+        new: 'address'
+      },
+      {
+        original: 'credit card number',
+        new: 'credit_card'
+      },
+    ]
 
     const persistContactsFromCsv = container.resolve(PersistContactsFromCsv)
-    const contacts = await persistContactsFromCsv.execute({ user_id, filename, headers})
+    const contacts = await persistContactsFromCsv.execute({ user_id, file, headers})
     return rep.status(201).json(contacts)
   }
 }

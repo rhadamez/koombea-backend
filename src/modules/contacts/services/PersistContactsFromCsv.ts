@@ -1,11 +1,13 @@
-import fs from 'fs'
+import fs, { ReadStream } from 'fs'
 import crypto from 'crypto'
 import { inject, injectable } from 'tsyringe'
 import csvParse from 'csv-parse'
 import cardValidator from 'card-validator'
 
 import { ContactsRepository } from '../repositories/ContactsRepository'
-import { ContactMapper } from '../mappers/ContactMapper'
+import { CsvFilesRepository } from '../../csvFiles/repositories/CsvFilesRepository'
+import LocalStorageProvider from '../../../shared/providers/StorageProvider/implementations/LocalStorageProvider'
+import uploadConfig from '../../../config/uploadConfig'
 
 interface HeaderTypes {
 	original: string
@@ -14,7 +16,7 @@ interface HeaderTypes {
 
 interface Request {
 	user_id: number
-	file: Express.Multer.File
+	filename: string
 	headers: HeaderTypes[]
 }
 
@@ -23,15 +25,28 @@ export class PersistContactsFromCsv {
 
 	constructor(
 		@inject('ContactsRepository')
-		private contactsRepository: ContactsRepository
+		private contactsRepository: ContactsRepository,
+
+		@inject('CsvFilesRepository')
+    private csvFilesRepository: CsvFilesRepository,
+
+		@inject('LocalStorageProvider')
+		private localStorageProvider: LocalStorageProvider
 	) { }
 
-	async execute({ user_id, file, headers }: Request): Promise<void> {
+	async execute({ user_id, filename, headers }: Request): Promise<void> {
+		const file = this.localStorageProvider.find(filename)
+
 		const contactsFormatted = await this.formatContactsFromCsv(file, headers)
 		const contactsWithFranchise = this.addNewPropsToContacts(contactsFormatted, user_id)
 
 		await this.contactsRepository.createAll(contactsWithFranchise)
-	
+		await this.csvFilesRepository.create({
+			file: filename,
+			file_status: 'Finished',
+			user_id
+		})
+
 		return
 	}
 
@@ -45,8 +60,8 @@ export class PersistContactsFromCsv {
 		})
 	}
 
-	async formatContactsFromCsv(file: Express.Multer.File, headers: HeaderTypes[]): Promise<any[]> {
-		const stream = fs.createReadStream(file.path)
+	async formatContactsFromCsv(file: ReadStream, headers: HeaderTypes[]): Promise<any[]> {
+		const stream = file
 
 		const parseFile = csvParse.parse({
 				delimiter: ','

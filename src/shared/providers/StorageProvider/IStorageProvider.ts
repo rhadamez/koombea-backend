@@ -1,4 +1,6 @@
+import { ReadStream } from "fs"
+
 export default interface IStorageProvider {
-    save(file: string): Promise<string>
+    find(file: string): ReadStream
     delete(file: string): Promise<void>
 }
