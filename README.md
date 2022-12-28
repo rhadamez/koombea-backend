@@ -13,7 +13,7 @@
 ```
 "yarn" or "npm install" at root to install the dependencies.
 ```
-It is necessary change the file "ormconfig.json" at root with the correct credentials to access the database.
+It is necessary change the file "ormconfig.json" at root with the correct credentials to access the database. Also you need to create manually the database "backend".
 ```
 "yarn typeorm migration:run" to create the database migrations (remember to check the ormconfig.json).
 ```
