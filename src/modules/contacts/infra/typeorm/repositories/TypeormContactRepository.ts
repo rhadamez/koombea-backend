@@ -9,10 +9,10 @@ export class TypeormContactRepository implements ContactsRepository {
 		this.ormRepository = getRepository(Contact)
   }
 
-  async createAll(contacts: Contact[]): Promise<void> {
+  async createAll(contacts: Contact[]): Promise<Contact[]> {
     const newContacts = this.ormRepository.create(contacts)
 
-    await this.ormRepository.save(newContacts)
+    return await this.ormRepository.save(newContacts)
   }
 
   async findByEmail(email: string): Promise<Contact | undefined> {

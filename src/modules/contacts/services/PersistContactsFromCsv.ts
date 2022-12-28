@@ -5,8 +5,8 @@ import csvParse from 'csv-parse'
 import cardValidator from 'card-validator'
 
 import { ContactsRepository } from '../repositories/ContactsRepository'
-import { UsersRepository } from '../../users/repositories/UsersRepository'
-import { format, formatISO, isMatch } from 'date-fns'
+import { ContactDTO } from '../dtos/ContactDTO'
+import { ContactMapper } from '../mappers/ContactMapper'
 
 interface HeaderTypes {
 	original: string
@@ -24,28 +24,30 @@ export class PersistContactsFromCsv {
 
 	constructor(
 		@inject('ContactsRepository')
-		private contactsRepository: ContactsRepository,
-
-		@inject('UsersRepository')
-		private usersRepository: UsersRepository
+		private contactsRepository: ContactsRepository
 	) { }
 
 	async execute({ user_id, file, headers }: Request): Promise<any> {
-		const contactsFormatted = await this.formatContacts(file, headers)
-		const contactsWithFranchise = contactsFormatted.map(c => {
+		const contactsFormatted = await this.formatContactsFromCsv(file, headers)
+		const contactsWithFranchise = this.addNewPropsToContacts(contactsFormatted, user_id)
+
+		const contacts = await this.contactsRepository.createAll(contactsWithFranchise)
+		const contactsDTO = contacts.map(item => ContactMapper.contactEntityToDTO(item))
+
+		return { contacts: contactsDTO }
+	}
+
+	addNewPropsToContacts(contactsFormatted: any[], user_id: number): any[] {
+		return contactsFormatted.map(c => {
 			const franchise = this.setCardFranchise(c.credit_card)
 			const credit_card = crypto.createHash('md5').update(c.credit_card).digest("hex")
 			const cardLastDigits = new String(c.credit_card)
 			const card_last_digits = cardLastDigits.substring(cardLastDigits.length - 4, cardLastDigits.length)
 			return {...c, franchise, credit_card: credit_card, card_last_digits, user_id }
 		})
+	}
 
-		await this.contactsRepository.createAll(contactsWithFranchise)
-
-		return { contactsWithFranchise }
-		}
-
-	async formatContacts(file: Express.Multer.File, headers: HeaderTypes[]): Promise<any[]> {
+	async formatContactsFromCsv(file: Express.Multer.File, headers: HeaderTypes[]): Promise<any[]> {
 		const stream = fs.createReadStream(file.path)
 
 		const parseFile = csvParse.parse({
@@ -98,7 +100,6 @@ export class PersistContactsFromCsv {
 	setCardFranchise(cardNumber: any) {
 		const { card } = cardValidator.number(cardNumber)
 		const type = card && card.type
-		console.log(type)
 		return type
 	}
 }
