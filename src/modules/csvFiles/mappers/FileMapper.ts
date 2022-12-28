@@ -2,7 +2,7 @@ import { CsvFileWithLinkDTO } from "../dtos/CsvFileWithLinkDTO";
 import CsvFile from "../infra/typeorm/entities/CsvFile";
 
 export class CsvFileMapper {
-  static fileToFileDTO(csvFile: CsvFile): CsvFileWithLinkDTO {
+  static fileToFileWithLinkdDTO(csvFile: CsvFile): CsvFileWithLinkDTO {
     const newCsvFile: CsvFileWithLinkDTO = {
       file: csvFile.file,
       file_status: csvFile.file_status,

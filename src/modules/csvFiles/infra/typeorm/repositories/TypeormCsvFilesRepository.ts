@@ -16,4 +16,8 @@ export class TypeormCsvFilesRepository implements CsvFilesRepository {
     await this.ormRepository.save(newContacts)
   }
 
+  async listByUser(user_id: number): Promise<CsvFile[]> {
+    return this.ormRepository.find({ where: { user_id } })
+  }
+
 }
