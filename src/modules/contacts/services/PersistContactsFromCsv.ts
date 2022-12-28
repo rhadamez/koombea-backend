@@ -1,11 +1,12 @@
 import fs from 'fs'
-
+import crypto from 'crypto'
 import { inject, injectable } from 'tsyringe'
 import csvParse from 'csv-parse'
 import cardValidator from 'card-validator'
 
 import { ContactsRepository } from '../repositories/ContactsRepository'
 import { UsersRepository } from '../../users/repositories/UsersRepository'
+import { format, formatISO, isMatch } from 'date-fns'
 
 interface HeaderTypes {
 	original: string
@@ -30,13 +31,17 @@ export class PersistContactsFromCsv {
 	) { }
 
 	async execute({ user_id, file, headers }: Request): Promise<any> {
-		const userExists = await this.usersRepository.findById(user_id)
-
 		const contactsFormatted = await this.formatContacts(file, headers)
 		const contactsWithFranchise = contactsFormatted.map(c => {
 			const franchise = this.setCardFranchise(c.credit_card)
-			return {...c, franchise}
+			const credit_card = crypto.createHash('md5').update(c.credit_card).digest("hex")
+			const cardLastDigits = new String(c.credit_card)
+			const card_last_digits = cardLastDigits.substring(cardLastDigits.length - 4, cardLastDigits.length)
+			return {...c, franchise, credit_card: credit_card, card_last_digits, user_id }
 		})
+
+		await this.contactsRepository.createAll(contactsWithFranchise)
+
 		return { contactsWithFranchise }
 		}
 

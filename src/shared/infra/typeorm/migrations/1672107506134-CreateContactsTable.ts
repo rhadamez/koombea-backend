@@ -19,11 +19,13 @@ export class CreateContactsTable1672107506134 implements MigrationInterface {
 				},
 				{
 					name: 'date_of_birth',
-					type: 'varchar'
+					type: 'varchar',
+					isNullable: true
 				},
 				{
 					name: 'phone',
-					type: 'varchar'
+					type: 'varchar',
+					isNullable: true
 				},
 				{
 					name: 'address',
@@ -34,8 +36,13 @@ export class CreateContactsTable1672107506134 implements MigrationInterface {
 					type: 'varchar'
 				},
 				{
-					name: 'franchise',
+					name: 'card_last_digits',
 					type: 'varchar'
+				},
+				{
+					name: 'franchise',
+					type: 'varchar',
+					isNullable: true
 				},
 				{
 					name: 'email',

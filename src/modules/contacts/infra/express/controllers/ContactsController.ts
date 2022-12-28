@@ -35,7 +35,7 @@ export class ContactsController {
       },
       {
         original: 'birth',
-        new: 'date_of_birthday'
+        new: 'date_of_birth'
       },
       {
         original: 'telephone',

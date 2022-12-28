@@ -20,12 +20,15 @@ export default class Contact extends BaseEntity {
 	credit_card: string
 
 	@Column()
+	card_last_digits: string
+
+	@Column()
 	franchise: string
 
 	@Column()
 	email: string
 
-	@Column({ nullable: true })
+	@Column()
 	user_id: number
 
 	@ManyToOne(() => User, { eager: false })
