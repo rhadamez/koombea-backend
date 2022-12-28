@@ -1,5 +1,4 @@
 import { inject, injectable } from "tsyringe";
-import { CsvFileWithLinkDTO } from "../dtos/CsvFileWithLinkDTO";
 import { CsvFileMapper } from "../mappers/FileMapper";
 import { CsvFilesRepository } from "../repositories/CsvFilesRepository";
 
@@ -14,9 +13,9 @@ export class ListFilesByUserService {
     private csvFilesRepository: CsvFilesRepository
   ) {}
 
-  async execute({ user_id }: Request): Promise<CsvFileWithLinkDTO[]> {
+  async execute({ user_id }: Request): Promise<any> {
     const files = await this.csvFilesRepository.listByUser(user_id)
     const filesDTO = files.map(item => CsvFileMapper.fileToFileWithLinkdDTO(item))
-    return filesDTO
+    return { files: filesDTO }
   }
 }
