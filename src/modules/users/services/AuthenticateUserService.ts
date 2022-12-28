@@ -9,6 +9,10 @@ import CredentialsIncorrectException from '../../../shared/infra/errors/Credenti
 
 interface IResponse {
 	token: string
+	user: {
+		id: number
+		username: string
+	}
 }
 
 @injectable()
@@ -32,6 +36,11 @@ export class AuthenticateUserService {
 			secret,
 			{ expiresIn, algorithm })
 
-		return { token }
+		const user = {
+			id: userExists.id,
+			username: userExists.username
+		}
+
+		return { token, user }
 	}
 }

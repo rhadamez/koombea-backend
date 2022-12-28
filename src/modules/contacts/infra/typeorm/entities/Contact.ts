@@ -2,13 +2,13 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import BaseEntity from '../../../../../shared/infra/typeorm/entities/BaseEntity'
 import { User } from '../../../../users/infra/typeorm/entities/User'
 
-@Entity('users')
+@Entity('contacts')
 export default class Contact extends BaseEntity {
 	@Column()
 	name: string
 
 	@Column()
-	dateOfBirth: string
+	date_of_birth: string
 
 	@Column()
 	phone: string
@@ -17,7 +17,7 @@ export default class Contact extends BaseEntity {
 	address: string
 
 	@Column()
-	creditCard: string
+	credit_card: string
 
 	@Column()
 	franchise: string
