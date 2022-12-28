@@ -2,7 +2,7 @@
 
 ## Techs
 
-- Nodejs: The backend is and api builded with nodejs;
+- Nodejs: The backend was made with nodejs;
 - Express: as framework;
 - Typeorm: as ORM;
 - Postgres: as database;
