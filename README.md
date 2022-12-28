@@ -20,4 +20,6 @@ It is necessary change the file "ormconfig.json" at root with the correct creden
 ```
 "yarn dev" and the server will be running.
 ```
+The CSV file is at root called "csv-example.csv".
+
 Next step is to run the frontend react app.
