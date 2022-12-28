@@ -1,20 +1,28 @@
 import { inject, injectable } from "tsyringe";
-import Contact from "../infra/typeorm/entities/Contact";
+import { ContactDTO } from "../dtos/ContactDTO";
+import { ContactMapper } from "../mappers/ContactMapper";
 import { ContactsRepository } from "../repositories/ContactsRepository";
 
 interface Request {
   user_id: number
 }
 
+interface Response {
+  contacts: ContactDTO[]
+}
+
 @injectable()
 export class ListContactsByUserService {
-  
+
   constructor(
     @inject('ContactsRepository')
     private contactsRepository: ContactsRepository
   ) { }
 
-  async execute({ user_id }: Request): Promise<Contact[]> {
-    return await this.contactsRepository.listByUser(user_id)
+  async execute({ user_id }: Request): Promise<Response> {
+    const contacts = await this.contactsRepository.listByUser(user_id)
+		const contactsDTO = contacts.map(item => ContactMapper.contactEntityToDTO(item))
+
+    return { contacts: contactsDTO }
   }
 }

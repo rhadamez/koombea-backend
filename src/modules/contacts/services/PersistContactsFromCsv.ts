@@ -5,7 +5,6 @@ import csvParse from 'csv-parse'
 import cardValidator from 'card-validator'
 
 import { ContactsRepository } from '../repositories/ContactsRepository'
-import { ContactDTO } from '../dtos/ContactDTO'
 import { ContactMapper } from '../mappers/ContactMapper'
 
 interface HeaderTypes {
@@ -27,14 +26,13 @@ export class PersistContactsFromCsv {
 		private contactsRepository: ContactsRepository
 	) { }
 
-	async execute({ user_id, file, headers }: Request): Promise<any> {
+	async execute({ user_id, file, headers }: Request): Promise<void> {
 		const contactsFormatted = await this.formatContactsFromCsv(file, headers)
 		const contactsWithFranchise = this.addNewPropsToContacts(contactsFormatted, user_id)
 
-		const contacts = await this.contactsRepository.createAll(contactsWithFranchise)
-		const contactsDTO = contacts.map(item => ContactMapper.contactEntityToDTO(item))
-
-		return { contacts: contactsDTO }
+		await this.contactsRepository.createAll(contactsWithFranchise)
+	
+		return
 	}
 
 	addNewPropsToContacts(contactsFormatted: any[], user_id: number): any[] {
@@ -65,7 +63,7 @@ export class PersistContactsFromCsv {
 						if(i === 0) firstLine = line
 						else {
 							const [fcol1, fcol2, fcol3, fcol4, fcol5, fcol6] = firstLine
-							const aff = {
+							const object = {
 								[fcol1]: col1,
 								[fcol2]: col2,
 								[fcol3]: col3,
@@ -73,7 +71,7 @@ export class PersistContactsFromCsv {
 								[fcol5]: col5,
 								[fcol6]: col6,
 							}
-							contactsFromCsv.push(aff)
+							contactsFromCsv.push(object)
 						}
 						i++
 				})
